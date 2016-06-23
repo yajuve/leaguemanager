@@ -138,19 +138,19 @@ class LeagueManagerShortcodes extends LeagueManager
 			AND points2_minus = ( SELECT MAX(points2_minus) FROM {$wpdb->prefix}leaguemanager_teams WHERE season = {$season} AND league_id = {$league_id}) ");
 		
 		// most win
-		$performance['most_win'] = $wpdb->get_results(" SELECT  won_matches, title FROM {$wpdb->prefix}leaguemanager_teams
+		$performance['most_win'] = $wpdb->get_results(" SELECT  won_matches AS number, title FROM {$wpdb->prefix}leaguemanager_teams
 		WHERE 
 			season = {$season} AND league_id = {$league_id}
 			AND won_matches = ( SELECT MAX(won_matches) FROM {$wpdb->prefix}leaguemanager_teams WHERE season = {$season} AND league_id = {$league_id}) ");
 		
 		// most draw
-		$performance['most_draw'] = $wpdb->get_results(" SELECT  draw_matches, title FROM {$wpdb->prefix}leaguemanager_teams
+		$performance['most_draw'] = $wpdb->get_results(" SELECT  draw_matches AS number, title FROM {$wpdb->prefix}leaguemanager_teams
 		WHERE 
 			season = {$season} AND league_id = {$league_id}
 			AND draw_matches = ( SELECT MAX(draw_matches) FROM {$wpdb->prefix}leaguemanager_teams WHERE season = {$season} AND league_id = {$league_id}) ");
 			
 		// most lost
-	    $performance['most_lost'] = $wpdb->get_results(" SELECT  lost_matches, title FROM {$wpdb->prefix}leaguemanager_teams
+	    $performance['most_lost'] = $wpdb->get_results(" SELECT  lost_matches AS number, title FROM {$wpdb->prefix}leaguemanager_teams
 		WHERE 
 			season = {$season} AND league_id = {$league_id}
 			AND lost_matches = ( SELECT MAX(lost_matches) FROM {$wpdb->prefix}leaguemanager_teams WHERE season = {$season} AND league_id = {$league_id}) ");
