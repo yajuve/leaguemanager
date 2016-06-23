@@ -71,10 +71,9 @@ class LeagueManagerShortcodes extends LeagueManager
 		extract(shortcode_atts(array(
 			'league_id' => 0,
 			'league_name' => '',
-			'team' => 0,
 			'season' => false,
 		), $atts ));
-		$team =64;
+
 		$search = !empty($league_name) ? $league_name : $league_id;
 		$league = $leaguemanager->getLeague( $search );
 		
