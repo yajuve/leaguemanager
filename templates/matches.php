@@ -51,12 +51,14 @@ The following variables are usable:
 <?php if ( $matches ) : ?>
 <table class='leaguemanager matchtable' summary='' title='<?php echo __( 'Match Plan', 'leaguemanager' )." ".$league->title ?>'>
 <tr>
-	<th class='match'><?php _e( 'Match', 'leaguemanager' ) ?></th>
-	<th class='score'><?php _e( 'Score', 'leaguemanager' ) ?></th>
+	<th class='match_day'></th>
+	<th class='match'>		<?php _e( 'Match', 'leaguemanager' ) ?></th>
+	<th class='score'>		<?php _e( 'Score', 'leaguemanager' ) ?></th>
 </tr>
 <?php foreach ( $matches AS $match ) : ?>
 
 <tr class='<?php echo $match->class ?>'>
+	<td><?php echo $match->match_day ?></td>
 	<td class='match'><?php echo $match->date." ".$match->start_time." ".$match->location ?><br /><a href="<?php echo $match->pageURL ?>"><?php echo $match->title ?></a> <?php echo $match->report ?></td>
 	<td class='score' valign='bottom'><?php echo $match->score ?></td>
 </tr>

@@ -56,10 +56,13 @@ class LeagueManagerShortcodes extends LeagueManager
 		add_shortcode( 'teams', array(&$this, 'showTeams') );
 		add_shortcode( 'team', array(&$this, 'showTeam') );
 		add_shortcode( 'leaguearchive', array(&$this, 'showArchive') );
+		add_shortcode( 'statsleague', array(&$this, 'showStatsLeague') );
 
 		add_action( 'leaguemanager_teampage', array(&$this, 'showTeam') );
 	}
 
+	
+	
 
 	/**
 	 * Function to display League Standings
