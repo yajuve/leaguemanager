@@ -114,25 +114,25 @@ class LeagueManagerShortcodes extends LeagueManager
 		
 /********* Best performance teams *********/
 		// Best attack
-		$performance['best_attack'] = $wpdb->get_results(" SELECT points2_plus, title FROM {$wpdb->prefix}leaguemanager_teams
+		$performance['best_attack'] = $wpdb->get_results(" SELECT points2_plus AS goals, title FROM {$wpdb->prefix}leaguemanager_teams
 			WHERE season = {$season} AND league_id = {$league_id}
 				AND points2_plus = ( 
 					SELECT MAX(points2_plus) FROM {$wpdb->prefix}leaguemanager_teams 
 						WHERE season = {$season} AND league_id = {$league_id}) ");
 		// Best defence		
-		$performance['best_defence'] = $wpdb->get_results(" SELECT points2_plus, title FROM {$wpdb->prefix}leaguemanager_teams
+		$performance['best_defence'] = $wpdb->get_results(" SELECT points2_minus AS goals, title FROM {$wpdb->prefix}leaguemanager_teams
 			WHERE season = {$season} AND league_id = {$league_id}
 				AND points2_minus = ( 
 					SELECT MIN(points2_minus) FROM {$wpdb->prefix}leaguemanager_teams 
 						WHERE season = {$season} AND league_id = {$league_id}) ");
 		// Bad attack				
-		$performance['bad_attack'] = $wpdb->get_results(" SELECT points2_plus, title FROM {$wpdb->prefix}leaguemanager_teams
+		$performance['bad_attack'] = $wpdb->get_results(" SELECT points2_plus AS goals, title FROM {$wpdb->prefix}leaguemanager_teams
 		WHERE
 			season = {$season} AND league_id = {$league_id}
 			AND points2_plus = ( SELECT MIN(points2_plus) FROM {$wpdb->prefix}leaguemanager_teams WHERE season = {$season} AND league_id = {$league_id}) ");
 		
 		// bad defence
-		$performance['bad_defence'] = $wpdb->get_row(" SELECT points2_minus, title FROM {$wpdb->prefix}leaguemanager_teams
+		$performance['bad_defence'] = $wpdb->get_results(" SELECT points2_minus AS goals, title FROM {$wpdb->prefix}leaguemanager_teams
 		WHERE 
 			season = {$season} AND league_id = {$league_id}
 			AND points2_minus = ( SELECT MAX(points2_minus) FROM {$wpdb->prefix}leaguemanager_teams WHERE season = {$season} AND league_id = {$league_id}) ");
