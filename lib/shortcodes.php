@@ -61,6 +61,114 @@ class LeagueManagerShortcodes extends LeagueManager
 		add_action( 'leaguemanager_teampage', array(&$this, 'showTeam') );
 	}
 
+	/**
+	 * Function to display League Statistiques 
+	 * @author 	Kanfoud Mohamed Raouf.
+	 * @date june 2016.
+	 */
+	function showStatsLeague($atts){
+		global $wpdb, $leaguemanager;
+		extract(shortcode_atts(array(
+			'league_id' => 0,
+			'league_name' => '',
+			'team' => 0,
+			'season' => false,
+		), $atts ));
+		$team =64;
+		$search = !empty($league_name) ? $league_name : $league_id;
+		$league = $leaguemanager->getLeague( $search );
+		
+		if (!$season) {
+			$season = $leaguemanager->getSeason( $league );
+			$season = $season['name'];
+		}
+		
+/********* Global Stats *********/
+		$stats_global = $wpdb->get_row("
+		SELECT COUNT(away_points) AS match_played, 
+			SUM(home_points) AS sum_home_buts, 
+			SUM(away_points) AS sum_away_buts,
+			SUM(home_points) + SUM(away_points) AS sum_buts,
+			COUNT(DISTINCT match_day) as day_played
+		FROM {$wpdb->prefix}leaguemanager_matches 
+		WHERE league_id = {$league->id} AND season = {$season} AND (home_points OR away_points) IS NOT NULL");
+		
+		// The matchs with the highest number of goal
+		$highest_goals = (int)$wpdb->get_row(" 
+				SELECT (home_points + away_points) AS goals FROM {$wpdb->prefix}leaguemanager_matches 
+				WHERE league_id = {$league->id} AND season = {$season} 
+				ORDER BY (home_points+away_points) DESC")->goals;
+				
+		$matchs_with_highest_goals = $wpdb->get_results(" 
+		SELECT * FROM {$wpdb->prefix}leaguemanager_matches 
+		WHERE league_id = {$league->id} AND season = {$season} AND (home_points+away_points) = $highest_goals");
+		foreach($matchs_with_highest_goals as $match){
+			$str = '';
+			$str .= $leaguemanager->getTeam($match->home_team)->title;
+			$str .= ' ';
+			$str .= $match->home_points.' - '.$match->away_points;
+			$str .= ' ';
+			$str .= $leaguemanager->getTeam($match->away_team)->title;
+			$list_matchs_highest_goals[] = $str;
+		}
+		
+/********* Best performance teams *********/
+		// Best attack
+		$performance['best_attack'] = $wpdb->get_results(" SELECT points2_plus, title FROM {$wpdb->prefix}leaguemanager_teams
+			WHERE season = {$season} AND league_id = {$league_id}
+				AND points2_plus = ( 
+					SELECT MAX(points2_plus) FROM {$wpdb->prefix}leaguemanager_teams 
+						WHERE season = {$season} AND league_id = {$league_id}) ");
+		// Best defence		
+		$performance['best_defence'] = $wpdb->get_results(" SELECT points2_plus, title FROM {$wpdb->prefix}leaguemanager_teams
+			WHERE season = {$season} AND league_id = {$league_id}
+				AND points2_minus = ( 
+					SELECT MIN(points2_minus) FROM {$wpdb->prefix}leaguemanager_teams 
+						WHERE season = {$season} AND league_id = {$league_id}) ");
+		// Bad attack				
+		$performance['bad_attack'] = $wpdb->get_results(" SELECT points2_plus, title FROM {$wpdb->prefix}leaguemanager_teams
+		WHERE
+			season = {$season} AND league_id = {$league_id}
+			AND points2_plus = ( SELECT MIN(points2_plus) FROM {$wpdb->prefix}leaguemanager_teams WHERE season = {$season} AND league_id = {$league_id}) ");
+		
+		// bad defence
+		$performance['bad_defence'] = $wpdb->get_row(" SELECT points2_minus, title FROM {$wpdb->prefix}leaguemanager_teams
+		WHERE 
+			season = {$season} AND league_id = {$league_id}
+			AND points2_minus = ( SELECT MAX(points2_minus) FROM {$wpdb->prefix}leaguemanager_teams WHERE season = {$season} AND league_id = {$league_id}) ");
+		
+		// most win
+		$performance['most_win'] = $wpdb->get_results(" SELECT  won_matches, title FROM {$wpdb->prefix}leaguemanager_teams
+		WHERE 
+			season = {$season} AND league_id = {$league_id}
+			AND won_matches = ( SELECT MAX(won_matches) FROM {$wpdb->prefix}leaguemanager_teams WHERE season = {$season} AND league_id = {$league_id}) ");
+		
+		// most draw
+		$performance['most_draw'] = $wpdb->get_results(" SELECT  draw_matches, title FROM {$wpdb->prefix}leaguemanager_teams
+		WHERE 
+			season = {$season} AND league_id = {$league_id}
+			AND draw_matches = ( SELECT MAX(draw_matches) FROM {$wpdb->prefix}leaguemanager_teams WHERE season = {$season} AND league_id = {$league_id}) ");
+			
+		// most lost
+	    $performance['most_lost'] = $wpdb->get_results(" SELECT  lost_matches, title FROM {$wpdb->prefix}leaguemanager_teams
+		WHERE 
+			season = {$season} AND league_id = {$league_id}
+			AND lost_matches = ( SELECT MAX(lost_matches) FROM {$wpdb->prefix}leaguemanager_teams WHERE season = {$season} AND league_id = {$league_id}) ");
+		
+		
+		if ( empty($template) && $this->checkTemplate('statsleague-'.$league->sport) )
+			$filename = 'statsleague-'.$league->sport;
+		else
+			$filename = ( !empty($template) ) ? 'statsleague-'.$template : 'statsleague';
+			
+		$out = $this->loadTemplate( $filename, array(
+			'stats_global'	=> $stats_global,
+			'performance'	=> $performance,
+		) );
+
+		return $out;
+		
+	} // end showStatsLeague
 	
 	
 
