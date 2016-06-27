@@ -26,6 +26,16 @@
 		<td><?php _e( 'Goal Away', 'leaguemanager' ) ?></td>
 		<td><?php echo $stats_global->sum_away_buts ?></td>
 	</tr>
+	<tr>
+		<td><?php _e( 'Matchs with most goals', 'leaguemanager' ) ?></td>
+		<td>
+		<?php if (!empty($list_matchs_highest_goals)) : ?>
+			<?php foreach ($list_matchs_highest_goals AS $match) : ?>
+				<?php echo $match.'<br>'; ?>
+			<?php endforeach; ?>
+		<?php endif; ?>
+		</td>
+	</tr>
 </table>
 
 <table class="leaguemanager stats-points" style="width:auto">

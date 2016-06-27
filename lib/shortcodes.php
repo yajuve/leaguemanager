@@ -110,6 +110,7 @@ class LeagueManagerShortcodes extends LeagueManager
 			$str .= $leaguemanager->getTeam($match->away_team)->title;
 			$list_matchs_highest_goals[] = $str;
 		}
+
 		
 /********* Best performance teams *********/
 		// Best attack
@@ -161,8 +162,9 @@ class LeagueManagerShortcodes extends LeagueManager
 			$filename = ( !empty($template) ) ? 'statsleague-'.$template : 'statsleague';
 			
 		$out = $this->loadTemplate( $filename, array(
-			'stats_global'	=> $stats_global,
-			'performance'	=> $performance,
+			'stats_global'				=> $stats_global,
+			'list_matchs_highest_goals'	=> $list_matchs_highest_goals,
+			'performance'				=> $performance,
 		) );
 
 		return $out;
